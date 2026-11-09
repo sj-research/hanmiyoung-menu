@@ -168,6 +168,15 @@ footer{
   color:var(--muted);font-size:13px;text-align:center;
 }
 footer p{margin:0 0 4px}
+.social{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:2px 0 16px}
+.social a{
+  display:inline-flex;align-items:center;gap:7px;text-decoration:none;
+  padding:9px 14px;border-radius:999px;border:1.5px solid var(--line);
+  color:var(--ink);font-size:13.5px;font-weight:700;
+  transition:border-color .14s,color .14s;
+}
+@media (hover:hover){.social a:hover{border-color:var(--brick);color:var(--brick)}}
+.social svg{width:17px;height:17px;flex:0 0 auto}
 
 /* ---------- 오버레이 ---------- */
 .ovl{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(30,14,10,.55);padding:20px}
@@ -223,6 +232,7 @@ footer p{margin:0 0 4px}
 <main class="gut wrap" id="menu" lang="ko"></main>
 
 <footer class="gut wrap">
+  <div class="social" id="social"></div>
   <p id="unit">가격 단위: 원</p>
   <p id="brandFoot">꽃보다 예쁜 한미영 꽃백숙</p>
 </footer>
@@ -243,6 +253,41 @@ const CJK = {
   zh: "'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',sans-serif"
 };
 const CLOSE = { ko:'닫기', en:'Close', zh:'关闭', ja:'閉じる', vi:'Đóng', fr:'Fermer' };
+
+const SVG_PIN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+  + 'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+  + '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+const SVG_PLAY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+  + 'stroke-linejoin="round" aria-hidden="true">'
+  + '<circle cx="12" cy="12" r="9"/><path d="M10.2 8.3l6 3.7-6 3.7z" fill="currentColor"/></svg>';
+const SVG_CAM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+  + 'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+  + '<path d="M4 7.5h3L8.5 5.5h7L17 7.5h3a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8.5a1 1 0 0 1 1-1z"/>'
+  + '<circle cx="12" cy="13" r="3.4"/></svg>';
+
+const LINKS = [
+  { url: 'https://map.naver.com/p/entry/place/1090486247?lng=127.0107997&lat=37.5724091'
+       + '&placePath=%2Fhome%3Ffrom%3Dmap%26fromPanelNum%3D1%26additionalHeight%3D76'
+       + '%26timestamp%3D202611091131%26locale%3Dko%26svcName%3Dmap_pcv5&searchType=place&c=15.00,0,0,0,dh',
+    icon: SVG_PIN,
+    label: { ko:'네이버 지도', en:'Naver Map', zh:'NAVER 地图', ja:'NAVER マップ',
+             vi:'Naver Map', fr:'Naver Map' } },
+  { url: 'https://youtube.com/@ggoat100suk22',
+    icon: SVG_PLAY,
+    label: { ko:'유튜브', en:'YouTube', zh:'YouTube', ja:'YouTube', vi:'YouTube', fr:'YouTube' } },
+  { url: 'https://www.instagram.com/ggoat100suk2022',
+    icon: SVG_CAM,
+    label: { ko:'인스타그램', en:'Instagram', zh:'Instagram', ja:'Instagram',
+             vi:'Instagram', fr:'Instagram' } }
+];
+
+function renderSocial(code){
+  el('social').innerHTML = LINKS.map(function(l){
+    const t = l.label[code] || l.label.en;
+    return '<a href="' + l.url + '" target="_blank" rel="noopener noreferrer">'
+         + l.icon + '<span>' + esc(t) + '</span></a>';
+  }).join('');
+}
 
 const el = id => document.getElementById(id);
 let lang = 'ko', tab = 'meals';
@@ -317,6 +362,7 @@ function render(){
     b.setAttribute('aria-pressed', b.dataset.code === lang);
   });
   el('langClose').textContent = CLOSE[d.code] || CLOSE.en;
+  renderSocial(d.code);
 }
 
 function setLang(code, remember){
